@@ -14,11 +14,21 @@ app.post("/", async (req, res) => {
   res.json({ status: "OK" });
 });
 
-app.get("/", async (req, res) => {
+app.get("/:cpf?", async (req, res) => {
+  const cpf = req.params.cpf;
   const db = await require("./db");
-  const pessoas = await db.pessoa.find();
+
+  let pessoas;
+  if (cpf) {
+    pessoas = await db.pessoa.findDoc({cpf: cpf});
+  } else {
+    //pessoas = await db.pessoa.findDoc({id: 6});
+    //pessoas = await db.pessoa.findDoc(6);
+    pessoas = await db.pessoa.findDoc(undefined);
+  }
+  //.map(e => e.body)
   // const result = pessoas;
-  const result = pessoas.map(e => e.body);
+  const result = pessoas;
   res.json(result);
 })
 
